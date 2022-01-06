@@ -18,6 +18,7 @@
                             SelectionMode="Multiple"
                             MultiSelectionDisplayMode="Token"
                             PlaceholderText="Try anne"
+                            InputSubmitted="OnInputSubmitted"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Width="500">
