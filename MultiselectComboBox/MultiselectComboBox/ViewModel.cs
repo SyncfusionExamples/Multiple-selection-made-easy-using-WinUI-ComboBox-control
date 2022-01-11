@@ -1,4 +1,6 @@
-﻿using Syncfusion.UI.Xaml.Core;
+﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Syncfusion.UI.Xaml.Core;
 using Syncfusion.UI.Xaml.Editors;
 using System;
 using System.Collections;
@@ -7,7 +9,9 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace MultiselectComboBox
 {
@@ -26,6 +30,14 @@ namespace MultiselectComboBox
             Persons.Add(createNewPerson("Nancy", "Davolio", "nancy.davolio@mail.com"));
             Persons.Add(createNewPerson("Robert", "King", "robert.king@mail.com"));
             Persons.Add(createNewPerson("Steven", "Buchanan", "steven.buchanan@mail.com"));
+
+            InputSubmitted = new DelegateCommand(OnInputSubmitted, CanExe);
+
+        }
+
+        private bool CanExe(object obj)
+        {
+            return true;
         }
 
         private ObservableCollection<Person> persons;
@@ -42,6 +54,8 @@ namespace MultiselectComboBox
                 }
             }
         }
+
+        public ICommand InputSubmitted { get; set; }
 
         private Person createNewPerson(string firstName, string lastName, string eMail)
         {
@@ -69,7 +83,6 @@ namespace MultiselectComboBox
             return indices;
         }
 
-
         public List<int> GetMatchingIndexes2(SfComboBox source, ComboBoxFilterInfo filterInfo)
         {
             var items = Persons;
@@ -94,6 +107,45 @@ namespace MultiselectComboBox
             var indices = firstPriority.Union(secondPriority).Select<Person, int>(p => items.IndexOf(p)).ToList();
 
             return indices;
+        }
+
+        public void OnInputSubmitted(object e)
+        {
+            var args = e as ComboBoxInputSubmittedEventArgs;
+            var emailString = args.Text;
+            bool isEmail = Regex.IsMatch(emailString, @"\A(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)\Z", RegexOptions.IgnoreCase);
+
+            // If given input is a valid email format
+            if (isEmail)
+            {
+                // Create new person for selection
+                Person newPerson = new Person();
+                newPerson.EmailID = emailString;
+                int atIndex = emailString.LastIndexOf('@');
+                int dotIndex = emailString.IndexOf('.');
+                string name = emailString.Substring(0, atIndex);
+                if (name.Contains('.'))
+                {
+                    newPerson.FirstName = name.Substring(0, dotIndex);
+                    newPerson.LastName = name.Substring(dotIndex + 1);
+                }
+                else
+                {
+                    newPerson.FirstName = name;
+                }
+                args.Item = newPerson;
+            }
+
+            // If email is id invalid, show error dialog.
+            else
+            {
+                var dialog = new ContentDialog();
+                dialog.CloseButtonText = "Close";
+                dialog.Content = "Invalid email id!";
+                dialog.Title = "Error";
+                // dialog.XamlRoot = this.Content.XamlRoot;
+                // await dialog.ShowAsync();
+            }
         }
     }
 }
