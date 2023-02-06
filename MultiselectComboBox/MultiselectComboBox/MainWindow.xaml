@@ -6,6 +6,8 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:editors="using:Syncfusion.UI.Xaml.Editors"
+    xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
+    xmlns:Interactions="using:Microsoft.Xaml.Interactions.Core"
     mc:Ignorable="d">
     <Grid>
         <Grid.DataContext>
@@ -18,10 +20,14 @@
                             SelectionMode="Multiple"
                             MultiSelectionDisplayMode="Token"
                             PlaceholderText="Try anne"
-                            InputSubmitted="OnInputSubmitted"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Width="500">
+            <Interactions:EventTriggerBehavior EventName="Loaded">
+                <!--<Interactions:EventTriggerBehavior EventName="InputSubmitted">-->
+                <Interactions:InvokeCommandAction Command="{Binding InputSubmitted}"/>
+                <!--<Interactions:CallMethodAction MethodName="OnInputSubmitted" TargetObject="{Binding}"/>-->
+            </Interactions:EventTriggerBehavior>
             <editors:SfComboBox.ItemTemplate>
                 <DataTemplate>
                     <TextBlock Text="{Binding EmailID}"/>
@@ -39,37 +45,4 @@
             </editors:SfComboBox.TokenItemTemplate>
         </editors:SfComboBox>
     </Grid>
-    <!--<Grid>
-        <Grid.DataContext>
-            <local:ViewModel/>
-        </Grid.DataContext>
-        <editors:SfComboBox ItemsSource="{Binding Persons}"
-                            IsEditable="True"
-                            IsFilteringEnabled="True"
-                            IsTextSearchEnabled="True"
-                            FilterBehavior="{Binding}"
-                            SearchBehavior="{Binding}"
-                            SelectionMode="Multiple"
-                            MultiSelectionDisplayMode="Token"
-                            PlaceholderText="Try anne"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            Width="500">
-            <editors:SfComboBox.ItemTemplate>
-                <DataTemplate>
-                    <TextBlock Text="{Binding EmailID}"/>
-                </DataTemplate>
-            </editors:SfComboBox.ItemTemplate>
-            <editors:SfComboBox.TokenItemTemplate>
-                <DataTemplate>
-                    <TextBlock>
-                        <TextBlock.Inlines>
-                            <Run Text="{Binding FirstName}" />
-                            <Run Text="{Binding LastName}" />
-                        </TextBlock.Inlines>
-                    </TextBlock>
-                </DataTemplate>
-            </editors:SfComboBox.TokenItemTemplate>
-        </editors:SfComboBox>
-    </Grid>-->
 </Window>
